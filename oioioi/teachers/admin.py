@@ -9,6 +9,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django import forms
 from django.urls import reverse
+from django.contrib import admin as cadmin
+
 from oioioi.base import admin
 from oioioi.base.menu import personal_menu_registry
 from oioioi.base.permissions import is_superuser
@@ -33,7 +35,7 @@ class AddTeacherAdminForm(forms.ModelForm):
 
 
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ['user', 'school', 'is_active']
+    list_display = ['get_user', 'school', 'is_active']
     list_editable = ['is_active']
     search_fields = ['school', 'user__username', 'user__first_name', 'user__last_name', 'user__email']
     add_form = AddTeacherAdminForm
@@ -44,6 +46,10 @@ class TeacherAdmin(admin.ModelAdmin):
             defaults['form'] = self.add_form
         defaults.update(kwargs)
         return super().get_form(request, obj, **defaults)
+
+    @cadmin.display(ordering='user__username', description=_('User'))
+    def get_user(self, obj):
+        return obj.user.username
 
     def has_add_permission(self, request):
         return request.user.is_superuser
