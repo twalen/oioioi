@@ -35,6 +35,7 @@ class AddTeacherAdminForm(forms.ModelForm):
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ['user', 'school', 'is_active']
     list_editable = ['is_active']
+    search_fields = ['school', 'user__username', 'user__first_name', 'user__last_name', 'user__email']
     add_form = AddTeacherAdminForm
 
     def get_form(self, request, obj=None, **kwargs):
