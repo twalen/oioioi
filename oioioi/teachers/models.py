@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from oioioi.base.utils import generate_key
 from oioioi.base.utils.deps import check_django_app_dependencies
+from oioioi.base.utils.user_selection import UserSelectionField, UserSelectionWidget
 from oioioi.contests.models import Contest
 
 check_django_app_dependencies(__name__, ['oioioi.participants'])
@@ -26,6 +27,8 @@ class Teacher(models.Model):
     school = models.CharField(max_length=255, verbose_name=_("school"))
 
     class Meta(object):
+        verbose_name = _("teacher")
+        verbose_name_plural = _("teachers")
         permissions = (('teacher', _("Is a teacher")),)
 
     def __str__(self):
@@ -38,6 +41,8 @@ class ContestTeacher(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
     class Meta(object):
+        verbose_name = _("contest teacher")
+        verbose_name_plural = _("contest teachers")
         unique_together = ('contest', 'teacher')
 
     def __str__(self):

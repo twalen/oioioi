@@ -7,17 +7,42 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from django import forms
+from django.urls import reverse
 from oioioi.base import admin
 from oioioi.base.menu import personal_menu_registry
 from oioioi.base.permissions import is_superuser
+from oioioi.base.utils.user_selection import UserSelectionField, UserSelectionWidget
 from oioioi.contests.admin import ContestAdmin
 from oioioi.teachers.forms import TeacherContestForm
 from oioioi.teachers.models import ContestTeacher, RegistrationConfig, Teacher
 
 
+class AddTeacherAdminForm(forms.ModelForm):
+    user = UserSelectionField(
+        required=True,
+        widget=UserSelectionWidget(attrs={'placeholder': _("User name")}),
+        label=_("user")
+    )
+    is_active = forms.BooleanField(required=False, label=_("active"))
+    school = forms.CharField(label=_("school"))
+
+    def __init__(self, *args, **kwargs):
+        super(AddTeacherAdminForm, self).__init__(*args, **kwargs)
+        self.fields['user'].hints_url = reverse('get_suable_users')
+
+
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ['user', 'school', 'is_active']
     list_editable = ['is_active']
+    add_form = AddTeacherAdminForm
+
+    def get_form(self, request, obj=None, **kwargs):
+        defaults = {}
+        if obj is None:
+            defaults['form'] = self.add_form
+        defaults.update(kwargs)
+        return super().get_form(request, obj, **defaults)
 
     def has_add_permission(self, request):
         return request.user.is_superuser
