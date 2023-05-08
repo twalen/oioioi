@@ -63,6 +63,7 @@ Table of Contents
     sections/mixins
     sections/misc
     glossary
+    autoapi/index
 
 Indices and tables
 ==================

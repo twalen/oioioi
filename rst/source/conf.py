@@ -13,13 +13,21 @@
 
 import datetime
 import os
+import sys
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import django
+SRC_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "oioioi")
+sys.path.append(os.path.join(SRC_DIR, ".."))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'oioioi.test_settings')
 django.setup()
+
+django_settings = "oioioi.test_settings"  # for sphinxcontrib-django
+django_show_db_tables = True
+
 
 # -- General configuration -----------------------------------------------------
 
@@ -29,12 +37,16 @@ django.setup()
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    'sphinx.ext.autodoc',
+    # 'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
+    # 'sphinxcontrib_django',  not working yet!
+    'autoapi.extension',
 ]
 
-autodoc_member_order = 'bysource'
+autoapi_type = "python"
+autoapi_dirs = [SRC_DIR]
+autoapi_ignore = ["*migrations*", "*tests*"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -219,3 +231,15 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [('index', 'oioioi', u'OIOIOI Documentation', [u'SIO2 Team'], 1)]
+
+
+# for sphinxcontrib_django
+# def patch_django(app):
+#    """
+#    Your custom code here
+#    """
+#    print("patch")
+#
+#
+# def setup(app):
+#    app.connect("django-configured", patch_django)
